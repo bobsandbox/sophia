@@ -21,7 +21,7 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
       <Button
         variant="default"
         size="icon"
-        className="h-11 w-11 rounded-full"
+        className="h-11 w-11 shrink-0 rounded-full"
         onClick={() => onDateChange(subDays(date, 1))}
       >
         <ChevronLeft className="h-6 w-6" />
@@ -38,7 +38,7 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
             ? "Vandaag"
             : format(date, "EEEE d MMMM yyyy", { locale: nl })}
         </button>
-        <div className="relative">
+        <div className="relative h-8 w-8 overflow-hidden">
           <Button
             variant="ghost"
             size="icon"
@@ -50,7 +50,7 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
           <input
             ref={inputRef}
             type="date"
-            className="absolute inset-0 opacity-0 cursor-pointer"
+            className="absolute inset-0 h-full w-full opacity-0 cursor-pointer"
             value={format(date, "yyyy-MM-dd")}
             onChange={(e) => {
               if (e.target.value) {
@@ -65,7 +65,7 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
       <Button
         variant="default"
         size="icon"
-        className="h-11 w-11 rounded-full"
+        className="h-11 w-11 shrink-0 rounded-full"
         onClick={() => onDateChange(addDays(date, 1))}
         disabled={isToday(date)}
       >
