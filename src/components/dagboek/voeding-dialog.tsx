@@ -13,8 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
+import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
 
-const PRESETS = [30, 60, 90, 120, 150, 180];
+const PRESETS = [10, 20, 30, 40, 50, 60, 70, 80, 90];
 
 interface VoedingDialogProps {
   open: boolean;
@@ -24,6 +25,7 @@ interface VoedingDialogProps {
     timestamp: string;
     amountMl: number;
     braken: boolean;
+    person: string;
   }) => void;
   onDelete?: () => void;
   entry?: JournalEntry | null;
@@ -38,21 +40,24 @@ export function VoedingDialog({
   entry,
   selectedDate,
 }: VoedingDialogProps) {
-  const [amountMl, setAmountMl] = useState(120);
+  const [amountMl, setAmountMl] = useState(60);
   const [braken, setBraken] = useState(false);
+  const [person, setPerson] = useState(getLastPerson());
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [time, setTime] = useState(format(new Date(), "HH:mm"));
 
   useEffect(() => {
     if (open) {
       if (entry) {
-        setAmountMl(entry.amountMl ?? 120);
+        setAmountMl(entry.amountMl ?? 60);
         setBraken(entry.braken ?? false);
+        setPerson(entry.person ?? getLastPerson());
         setDate(format(new Date(entry.timestamp), "yyyy-MM-dd"));
         setTime(format(new Date(entry.timestamp), "HH:mm"));
       } else {
-        setAmountMl(120);
+        setAmountMl(60);
         setBraken(false);
+        setPerson(getLastPerson());
         setDate(format(selectedDate, "yyyy-MM-dd"));
         setTime(format(new Date(), "HH:mm"));
       }
@@ -64,11 +69,14 @@ export function VoedingDialog({
     const [h, m] = time.split(":").map(Number);
     const ts = new Date(y, mo - 1, d, h, m, 0, 0);
 
+    setLastPerson(person);
+
     onSave({
       entryType: "VOEDING",
       timestamp: ts.toISOString(),
       amountMl,
       braken,
+      person,
     });
   }
 
@@ -81,6 +89,23 @@ export function VoedingDialog({
 
         <div className="space-y-4">
           <div>
+            <label className="text-sm font-medium">Wie</label>
+            <div className="mt-2 flex gap-2">
+              {PEOPLE.map((p) => (
+                <Button
+                  key={p}
+                  variant={person === p ? "default" : "outline"}
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => setPerson(p)}
+                >
+                  {p}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <label className="text-sm font-medium">Hoeveelheid (ml)</label>
             <div className="mt-2 flex flex-wrap gap-2">
               {PRESETS.map((ml) => (
@@ -88,21 +113,13 @@ export function VoedingDialog({
                   key={ml}
                   variant={amountMl === ml ? "default" : "outline"}
                   size="sm"
-                  className="min-w-[52px]"
+                  className="min-w-[44px]"
                   onClick={() => setAmountMl(ml)}
                 >
                   {ml}
                 </Button>
               ))}
             </div>
-            <Input
-              type="number"
-              min={1}
-              max={500}
-              value={amountMl}
-              onChange={(e) => setAmountMl(Number(e.target.value))}
-              className="mt-2"
-            />
           </div>
 
           <div className="flex items-center gap-2">

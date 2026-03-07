@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
+import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
 
 interface LuierDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface LuierDialogProps {
     timestamp: string;
     pipi: boolean;
     kaka: boolean;
+    person: string;
   }) => void;
   onDelete?: () => void;
   entry?: JournalEntry | null;
@@ -37,6 +39,7 @@ export function LuierDialog({
 }: LuierDialogProps) {
   const [pipi, setPipi] = useState(false);
   const [kaka, setKaka] = useState(false);
+  const [person, setPerson] = useState(getLastPerson());
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [time, setTime] = useState(format(new Date(), "HH:mm"));
 
@@ -45,11 +48,13 @@ export function LuierDialog({
       if (entry) {
         setPipi(entry.pipi ?? false);
         setKaka(entry.kaka ?? false);
+        setPerson(entry.person ?? getLastPerson());
         setDate(format(new Date(entry.timestamp), "yyyy-MM-dd"));
         setTime(format(new Date(entry.timestamp), "HH:mm"));
       } else {
         setPipi(false);
         setKaka(false);
+        setPerson(getLastPerson());
         setDate(format(selectedDate, "yyyy-MM-dd"));
         setTime(format(new Date(), "HH:mm"));
       }
@@ -61,11 +66,14 @@ export function LuierDialog({
     const [h, m] = time.split(":").map(Number);
     const ts = new Date(y, mo - 1, d, h, m, 0, 0);
 
+    setLastPerson(person);
+
     onSave({
       entryType: "LUIER",
       timestamp: ts.toISOString(),
       pipi,
       kaka,
+      person,
     });
   }
 
@@ -77,6 +85,23 @@ export function LuierDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium">Wie</label>
+            <div className="mt-2 flex gap-2">
+              {PEOPLE.map((p) => (
+                <Button
+                  key={p}
+                  variant={person === p ? "default" : "outline"}
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => setPerson(p)}
+                >
+                  {p}
+                </Button>
+              ))}
+            </div>
+          </div>
+
           <div className="flex gap-3">
             <button
               type="button"

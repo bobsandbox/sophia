@@ -23,6 +23,7 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
         <thead>
           <tr className="text-xs text-muted-foreground border-b">
             <th className="pb-2 text-left font-medium">Tijd</th>
+            <th className="pb-2 text-left font-medium">Wie</th>
             <th className="pb-2 text-center font-medium">🍼 Voeding</th>
             <th className="pb-2 text-center font-medium">💧 Plas</th>
             <th className="pb-2 text-center font-medium">💩 Kaka</th>
@@ -37,6 +38,9 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
             >
               <td className="py-3 text-sm tabular-nums text-muted-foreground">
                 {format(new Date(entry.timestamp), "HH:mm")}
+              </td>
+              <td className="py-3 text-sm text-muted-foreground">
+                {entry.person ?? "-"}
               </td>
               <td className="py-3 text-center">
                 {entry.entryType === "VOEDING" ? (

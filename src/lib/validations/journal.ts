@@ -3,6 +3,7 @@ import { z } from "zod";
 export const voedingSchema = z.object({
   entryType: z.literal("VOEDING"),
   timestamp: z.coerce.date(),
+  person: z.string().optional(),
   amountMl: z.number().int().min(1).max(500),
   braken: z.boolean().default(false),
 });
@@ -10,6 +11,7 @@ export const voedingSchema = z.object({
 export const luierSchema = z.object({
   entryType: z.literal("LUIER"),
   timestamp: z.coerce.date(),
+  person: z.string().optional(),
   pipi: z.boolean().default(false),
   kaka: z.boolean().default(false),
 });

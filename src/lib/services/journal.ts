@@ -33,6 +33,7 @@ export async function createEntry(data: EntryInput) {
       data: {
         timestamp: data.timestamp,
         entryType: "VOEDING",
+        person: data.person,
         amountMl: data.amountMl,
         braken: data.braken,
       },
@@ -43,6 +44,7 @@ export async function createEntry(data: EntryInput) {
     data: {
       timestamp: data.timestamp,
       entryType: "LUIER",
+      person: data.person,
       pipi: data.pipi,
       kaka: data.kaka,
     },
@@ -56,6 +58,7 @@ export async function updateEntry(id: string, data: EntryInput) {
       data: {
         timestamp: data.timestamp,
         entryType: "VOEDING",
+        person: data.person,
         amountMl: data.amountMl,
         braken: data.braken,
         pipi: null,
@@ -69,6 +72,7 @@ export async function updateEntry(id: string, data: EntryInput) {
     data: {
       timestamp: data.timestamp,
       entryType: "LUIER",
+      person: data.person,
       pipi: data.pipi,
       kaka: data.kaka,
       amountMl: null,

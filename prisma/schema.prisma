@@ -24,6 +24,7 @@ model JournalEntry {
   updatedAt DateTime  @updatedAt
   timestamp DateTime
   entryType EntryType
+  person    String?
 
   // Voeding fields (null when LUIER)
   amountMl  Int?
