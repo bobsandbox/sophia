@@ -8,6 +8,12 @@ interface EntryListProps {
   onEdit: (entry: JournalEntry) => void;
 }
 
+const borderColors = {
+  VOEDING: "border-l-pink-400 dark:border-l-pink-500",
+  LUIER: "border-l-blue-400 dark:border-l-blue-500",
+  OPMERKING: "border-l-amber-400 dark:border-l-amber-500",
+};
+
 export function EntryList({ entries, onEdit }: EntryListProps) {
   if (entries.length === 0) {
     return (
@@ -31,20 +37,15 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
         </thead>
         <tbody>
           {entries.map((entry) => {
-            const rowColors = {
-              VOEDING: "bg-pink-50/50 dark:bg-pink-950/20",
-              LUIER: "bg-blue-50/50 dark:bg-blue-950/20",
-              OPMERKING: "bg-amber-50/50 dark:bg-amber-950/20",
-            };
-            const colorClass = rowColors[entry.entryType] ?? "";
+            const border = borderColors[entry.entryType] ?? "";
 
             return entry.entryType === "OPMERKING" ? (
               <tr
                 key={entry.id}
                 onClick={() => onEdit(entry)}
-                className={`border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted ${colorClass}`}
+                className={`border-b border-muted/50 border-l-3 ${border} cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted`}
               >
-                <td className="py-3 text-sm tabular-nums text-muted-foreground">
+                <td className="py-3 pl-2 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
                 <td colSpan={4} className="py-3 text-sm italic text-muted-foreground">
@@ -55,9 +56,9 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
               <tr
                 key={entry.id}
                 onClick={() => onEdit(entry)}
-                className={`border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted ${colorClass}`}
+                className={`border-b border-muted/50 border-l-3 ${border} cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted`}
               >
-                <td className="py-3 text-sm tabular-nums text-muted-foreground">
+                <td className="py-3 pl-2 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
                 <td className="py-3 text-sm text-muted-foreground">
