@@ -34,7 +34,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-xs space-y-4">
-        <h1 className="text-center text-2xl font-semibold">👶 Sophia</h1>
+        <img src="/sophia-logo.png" alt="Sophia" className="mx-auto h-16" />
         <Input
           type="password"
           placeholder="Wachtwoord"

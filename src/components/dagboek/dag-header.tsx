@@ -16,7 +16,7 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
 
   return (
     <div className="space-y-1 px-4 pt-3 pb-0">
-      <h1 className="text-center text-lg font-semibold">👶 Sophia</h1>
+      <img src="/sophia-logo.png" alt="Sophia" className="mx-auto h-10" />
     <div className="flex items-center justify-between">
       <Button
         variant="ghost"
