@@ -11,5 +11,27 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+enum EntryType {
+  VOEDING
+  LUIER
+}
+
+model JournalEntry {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  timestamp DateTime
+  entryType EntryType
+
+  // Voeding fields (null when LUIER)
+  amountMl  Int?
+  braken    Boolean?  @default(false)
+
+  // Luier fields (null when VOEDING)
+  pipi      Boolean?  @default(false)
+  kaka      Boolean?  @default(false)
+
+  @@index([timestamp])
 }
