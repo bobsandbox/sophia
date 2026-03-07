@@ -9,6 +9,7 @@ import { DagSamenvatting } from "./dag-samenvatting";
 import { EntryList } from "./entry-list";
 import { VoedingDialog } from "./voeding-dialog";
 import { LuierDialog } from "./luier-dialog";
+import { OpmerkingDialog } from "./opmerking-dialog";
 import { Button } from "@/components/ui/button";
 
 interface DagboekData {
@@ -29,6 +30,7 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
   const [data, setData] = useState<DagboekData>(initialData);
   const [voedingOpen, setVoedingOpen] = useState(false);
   const [luierOpen, setLuierOpen] = useState(false);
+  const [opmerkingOpen, setOpmerkingOpen] = useState(false);
   const [editEntry, setEditEntry] = useState<JournalEntry | null>(null);
 
   const fetchData = useCallback(async (d: Date) => {
@@ -39,10 +41,10 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
 
   // Poll for live updates every 5s (skip when a dialog is open)
   useEffect(() => {
-    if (voedingOpen || luierOpen) return;
+    if (voedingOpen || luierOpen || opmerkingOpen) return;
     const id = setInterval(() => fetchData(date), 5000);
     return () => clearInterval(id);
-  }, [date, voedingOpen, luierOpen, fetchData]);
+  }, [date, voedingOpen, luierOpen, opmerkingOpen, fetchData]);
 
   async function handleDateChange(d: Date) {
     setDate(d);
@@ -53,8 +55,10 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
     setEditEntry(entry);
     if (entry.entryType === "VOEDING") {
       setVoedingOpen(true);
-    } else {
+    } else if (entry.entryType === "LUIER") {
       setLuierOpen(true);
+    } else {
+      setOpmerkingOpen(true);
     }
   }
 
@@ -66,17 +70,20 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        toast.success(body.entryType === "VOEDING" ? "Voeding bijgewerkt" : "Luier bijgewerkt");
+        const labels: Record<string, string> = { VOEDING: "Voeding bijgewerkt", LUIER: "Luier bijgewerkt", OPMERKING: "Opmerking bijgewerkt" };
+        toast.success(labels[body.entryType] ?? "Bijgewerkt");
       } else {
         await fetch("/api/entries", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        toast.success(body.entryType === "VOEDING" ? "Voeding toegevoegd" : "Luier toegevoegd");
+        const addLabels: Record<string, string> = { VOEDING: "Voeding toegevoegd", LUIER: "Luier toegevoegd", OPMERKING: "Opmerking toegevoegd" };
+        toast.success(addLabels[body.entryType] ?? "Toegevoegd");
       }
       setVoedingOpen(false);
       setLuierOpen(false);
+      setOpmerkingOpen(false);
       setEditEntry(null);
 
       // Navigate to the date of the saved entry
@@ -101,6 +108,7 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
       toast.success("Verwijderd");
       setVoedingOpen(false);
       setLuierOpen(false);
+      setOpmerkingOpen(false);
       setEditEntry(null);
       await fetchData(date);
     } catch {
@@ -111,6 +119,7 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
   function closeDialogs() {
     setVoedingOpen(false);
     setLuierOpen(false);
+    setOpmerkingOpen(false);
     setEditEntry(null);
   }
 
@@ -147,6 +156,16 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
         >
           🧷 Luier
         </Button>
+        <Button
+          variant="outline"
+          className="h-12 flex-1 text-base"
+          onClick={() => {
+            setEditEntry(null);
+            setOpmerkingOpen(true);
+          }}
+        >
+          📝
+        </Button>
       </div>
 
       <VoedingDialog
@@ -164,6 +183,15 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
         onSave={handleSaveEntry}
         onDelete={editEntry ? handleDelete : undefined}
         entry={editEntry?.entryType === "LUIER" ? editEntry : null}
+        selectedDate={date}
+      />
+
+      <OpmerkingDialog
+        open={opmerkingOpen}
+        onClose={closeDialogs}
+        onSave={handleSaveEntry}
+        onDelete={editEntry ? handleDelete : undefined}
+        entry={editEntry?.entryType === "OPMERKING" ? editEntry : null}
         selectedDate={date}
       />
     </div>

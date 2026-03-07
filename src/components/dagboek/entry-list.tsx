@@ -30,44 +30,59 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
-            <tr
-              key={entry.id}
-              onClick={() => onEdit(entry)}
-              className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
-            >
-              <td className="py-3 text-sm tabular-nums text-muted-foreground">
-                {format(new Date(entry.timestamp), "HH:mm")}
-              </td>
-              <td className="py-3 text-sm text-muted-foreground">
-                {entry.person ?? "-"}
-              </td>
-              <td className="py-3 text-center">
-                {entry.entryType === "VOEDING" ? (
-                  <span className="text-sm font-medium">
-                    {entry.amountMl}ml
-                    {entry.braken && <span className="ml-1 text-amber-600 dark:text-amber-400">⚠</span>}
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground/30">-</span>
-                )}
-              </td>
-              <td className="py-3 text-center">
-                {entry.entryType === "LUIER" && entry.pipi ? (
-                  <span className="text-blue-600 dark:text-blue-400">✓</span>
-                ) : (
-                  <span className="text-muted-foreground/30">-</span>
-                )}
-              </td>
-              <td className="py-3 text-center">
-                {entry.entryType === "LUIER" && entry.kaka ? (
-                  <span className="text-amber-600 dark:text-amber-400">✓</span>
-                ) : (
-                  <span className="text-muted-foreground/30">-</span>
-                )}
-              </td>
-            </tr>
-          ))}
+          {entries.map((entry) =>
+            entry.entryType === "OPMERKING" ? (
+              <tr
+                key={entry.id}
+                onClick={() => onEdit(entry)}
+                className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
+              >
+                <td className="py-3 text-sm tabular-nums text-muted-foreground">
+                  {format(new Date(entry.timestamp), "HH:mm")}
+                </td>
+                <td colSpan={4} className="py-3 text-sm italic text-muted-foreground">
+                  📝 {entry.remark}
+                </td>
+              </tr>
+            ) : (
+              <tr
+                key={entry.id}
+                onClick={() => onEdit(entry)}
+                className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
+              >
+                <td className="py-3 text-sm tabular-nums text-muted-foreground">
+                  {format(new Date(entry.timestamp), "HH:mm")}
+                </td>
+                <td className="py-3 text-sm text-muted-foreground">
+                  {entry.person ?? "-"}
+                </td>
+                <td className="py-3 text-center">
+                  {entry.entryType === "VOEDING" ? (
+                    <span className="text-sm font-medium">
+                      {entry.amountMl}ml
+                      {entry.braken && <span className="ml-1 text-amber-600 dark:text-amber-400">⚠</span>}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground/30">-</span>
+                  )}
+                </td>
+                <td className="py-3 text-center">
+                  {entry.entryType === "LUIER" && entry.pipi ? (
+                    <span className="text-blue-600 dark:text-blue-400">✓</span>
+                  ) : (
+                    <span className="text-muted-foreground/30">-</span>
+                  )}
+                </td>
+                <td className="py-3 text-center">
+                  {entry.entryType === "LUIER" && entry.kaka ? (
+                    <span className="text-amber-600 dark:text-amber-400">✓</span>
+                  ) : (
+                    <span className="text-muted-foreground/30">-</span>
+                  )}
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </table>
     </div>

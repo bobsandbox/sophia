@@ -40,13 +40,24 @@ export async function createEntry(data: EntryInput) {
     });
   }
 
+  if (data.entryType === "LUIER") {
+    return prisma.journalEntry.create({
+      data: {
+        timestamp: data.timestamp,
+        entryType: "LUIER",
+        person: data.person,
+        pipi: data.pipi,
+        kaka: data.kaka,
+      },
+    });
+  }
+
   return prisma.journalEntry.create({
     data: {
       timestamp: data.timestamp,
-      entryType: "LUIER",
+      entryType: "OPMERKING",
       person: data.person,
-      pipi: data.pipi,
-      kaka: data.kaka,
+      remark: data.remark,
     },
   });
 }
@@ -63,6 +74,23 @@ export async function updateEntry(id: string, data: EntryInput) {
         braken: data.braken,
         pipi: null,
         kaka: null,
+        remark: null,
+      },
+    });
+  }
+
+  if (data.entryType === "LUIER") {
+    return prisma.journalEntry.update({
+      where: { id },
+      data: {
+        timestamp: data.timestamp,
+        entryType: "LUIER",
+        person: data.person,
+        pipi: data.pipi,
+        kaka: data.kaka,
+        amountMl: null,
+        braken: null,
+        remark: null,
       },
     });
   }
@@ -71,12 +99,13 @@ export async function updateEntry(id: string, data: EntryInput) {
     where: { id },
     data: {
       timestamp: data.timestamp,
-      entryType: "LUIER",
+      entryType: "OPMERKING",
       person: data.person,
-      pipi: data.pipi,
-      kaka: data.kaka,
+      remark: data.remark,
       amountMl: null,
       braken: null,
+      pipi: null,
+      kaka: null,
     },
   });
 }

@@ -16,6 +16,7 @@ datasource db {
 enum EntryType {
   VOEDING
   LUIER
+  OPMERKING
 }
 
 model JournalEntry {
@@ -33,6 +34,9 @@ model JournalEntry {
   // Luier fields (null when VOEDING)
   pipi      Boolean?  @default(false)
   kaka      Boolean?  @default(false)
+
+  // Opmerking fields (null when not OPMERKING)
+  remark    String?
 
   @@index([timestamp])
 }
