@@ -30,12 +30,19 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) =>
-            entry.entryType === "OPMERKING" ? (
+          {entries.map((entry) => {
+            const rowColors = {
+              VOEDING: "bg-pink-50/50 dark:bg-pink-950/20",
+              LUIER: "bg-blue-50/50 dark:bg-blue-950/20",
+              OPMERKING: "bg-amber-50/50 dark:bg-amber-950/20",
+            };
+            const colorClass = rowColors[entry.entryType] ?? "";
+
+            return entry.entryType === "OPMERKING" ? (
               <tr
                 key={entry.id}
                 onClick={() => onEdit(entry)}
-                className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
+                className={`border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted ${colorClass}`}
               >
                 <td className="py-3 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
@@ -48,7 +55,7 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
               <tr
                 key={entry.id}
                 onClick={() => onEdit(entry)}
-                className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
+                className={`border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted ${colorClass}`}
               >
                 <td className="py-3 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
@@ -81,8 +88,8 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                   )}
                 </td>
               </tr>
-            )
-          )}
+            );
+          })}
         </tbody>
       </table>
     </div>
