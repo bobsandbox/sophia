@@ -27,6 +27,7 @@ interface VoedingDialogProps {
   }) => void;
   onDelete?: () => void;
   entry?: JournalEntry | null;
+  selectedDate: Date;
 }
 
 export function VoedingDialog({
@@ -35,9 +36,11 @@ export function VoedingDialog({
   onSave,
   onDelete,
   entry,
+  selectedDate,
 }: VoedingDialogProps) {
   const [amountMl, setAmountMl] = useState(120);
   const [braken, setBraken] = useState(false);
+  const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [time, setTime] = useState(format(new Date(), "HH:mm"));
 
   useEffect(() => {
@@ -45,22 +48,21 @@ export function VoedingDialog({
       if (entry) {
         setAmountMl(entry.amountMl ?? 120);
         setBraken(entry.braken ?? false);
+        setDate(format(new Date(entry.timestamp), "yyyy-MM-dd"));
         setTime(format(new Date(entry.timestamp), "HH:mm"));
       } else {
         setAmountMl(120);
         setBraken(false);
+        setDate(format(selectedDate, "yyyy-MM-dd"));
         setTime(format(new Date(), "HH:mm"));
       }
     }
-  }, [open, entry]);
+  }, [open, entry, selectedDate]);
 
   function handleSave() {
+    const [y, mo, d] = date.split("-").map(Number);
     const [h, m] = time.split(":").map(Number);
-    const ts = new Date();
-    if (entry) {
-      ts.setTime(new Date(entry.timestamp).getTime());
-    }
-    ts.setHours(h, m, 0, 0);
+    const ts = new Date(y, mo - 1, d, h, m, 0, 0);
 
     onSave({
       entryType: "VOEDING",
@@ -114,14 +116,25 @@ export function VoedingDialog({
             </label>
           </div>
 
-          <div>
-            <label className="text-sm font-medium">Tijdstip</label>
-            <Input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="mt-1"
-            />
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="text-sm font-medium">Datum</label>
+              <Input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-sm font-medium">Tijdstip</label>
+              <Input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="mt-1"
+              />
+            </div>
           </div>
         </div>
 

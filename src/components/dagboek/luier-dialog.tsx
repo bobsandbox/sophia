@@ -24,6 +24,7 @@ interface LuierDialogProps {
   }) => void;
   onDelete?: () => void;
   entry?: JournalEntry | null;
+  selectedDate: Date;
 }
 
 export function LuierDialog({
@@ -32,9 +33,11 @@ export function LuierDialog({
   onSave,
   onDelete,
   entry,
+  selectedDate,
 }: LuierDialogProps) {
   const [pipi, setPipi] = useState(false);
   const [kaka, setKaka] = useState(false);
+  const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [time, setTime] = useState(format(new Date(), "HH:mm"));
 
   useEffect(() => {
@@ -42,22 +45,21 @@ export function LuierDialog({
       if (entry) {
         setPipi(entry.pipi ?? false);
         setKaka(entry.kaka ?? false);
+        setDate(format(new Date(entry.timestamp), "yyyy-MM-dd"));
         setTime(format(new Date(entry.timestamp), "HH:mm"));
       } else {
         setPipi(false);
         setKaka(false);
+        setDate(format(selectedDate, "yyyy-MM-dd"));
         setTime(format(new Date(), "HH:mm"));
       }
     }
-  }, [open, entry]);
+  }, [open, entry, selectedDate]);
 
   function handleSave() {
+    const [y, mo, d] = date.split("-").map(Number);
     const [h, m] = time.split(":").map(Number);
-    const ts = new Date();
-    if (entry) {
-      ts.setTime(new Date(entry.timestamp).getTime());
-    }
-    ts.setHours(h, m, 0, 0);
+    const ts = new Date(y, mo - 1, d, h, m, 0, 0);
 
     onSave({
       entryType: "LUIER",
@@ -100,14 +102,25 @@ export function LuierDialog({
             </button>
           </div>
 
-          <div>
-            <label className="text-sm font-medium">Tijdstip</label>
-            <Input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="mt-1"
-            />
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="text-sm font-medium">Datum</label>
+              <Input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-sm font-medium">Tijdstip</label>
+              <Input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="mt-1"
+              />
+            </div>
           </div>
         </div>
 

@@ -51,12 +51,7 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
     }
   }
 
-  async function handleSaveVoeding(body: {
-    entryType: "VOEDING";
-    timestamp: string;
-    amountMl: number;
-    braken: boolean;
-  }) {
+  async function handleSaveEntry(body: { entryType: string; timestamp: string; [key: string]: unknown }) {
     try {
       if (editEntry) {
         await fetch(`/api/entries/${editEntry.id}`, {
@@ -64,48 +59,29 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        toast.success("Voeding bijgewerkt");
+        toast.success(body.entryType === "VOEDING" ? "Voeding bijgewerkt" : "Luier bijgewerkt");
       } else {
         await fetch("/api/entries", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        toast.success("Voeding toegevoegd");
+        toast.success(body.entryType === "VOEDING" ? "Voeding toegevoegd" : "Luier toegevoegd");
       }
       setVoedingOpen(false);
-      setEditEntry(null);
-      await fetchData(date);
-    } catch {
-      toast.error("Er ging iets mis");
-    }
-  }
-
-  async function handleSaveLuier(body: {
-    entryType: "LUIER";
-    timestamp: string;
-    pipi: boolean;
-    kaka: boolean;
-  }) {
-    try {
-      if (editEntry) {
-        await fetch(`/api/entries/${editEntry.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        toast.success("Luier bijgewerkt");
-      } else {
-        await fetch("/api/entries", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        toast.success("Luier toegevoegd");
-      }
       setLuierOpen(false);
       setEditEntry(null);
-      await fetchData(date);
+
+      // Navigate to the date of the saved entry
+      const entryDate = new Date(body.timestamp);
+      const entryDay = new Date(entryDate.getFullYear(), entryDate.getMonth(), entryDate.getDate());
+      const currentDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      if (entryDay.getTime() !== currentDay.getTime()) {
+        setDate(entryDay);
+        await fetchData(entryDay);
+      } else {
+        await fetchData(date);
+      }
     } catch {
       toast.error("Er ging iets mis");
     }
@@ -169,17 +145,19 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
       <VoedingDialog
         open={voedingOpen}
         onClose={closeDialogs}
-        onSave={handleSaveVoeding}
+        onSave={handleSaveEntry}
         onDelete={editEntry ? handleDelete : undefined}
         entry={editEntry?.entryType === "VOEDING" ? editEntry : null}
+        selectedDate={date}
       />
 
       <LuierDialog
         open={luierOpen}
         onClose={closeDialogs}
-        onSave={handleSaveLuier}
+        onSave={handleSaveEntry}
         onDelete={editEntry ? handleDelete : undefined}
         entry={editEntry?.entryType === "LUIER" ? editEntry : null}
+        selectedDate={date}
       />
     </div>
   );
