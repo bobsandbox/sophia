@@ -19,11 +19,12 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
       <img src="/sophia-logo.png" alt="Sophia" className="mx-auto h-10" />
     <div className="flex items-center justify-between">
       <Button
-        variant="ghost"
+        variant="default"
         size="icon"
+        className="h-11 w-11 rounded-full"
         onClick={() => onDateChange(subDays(date, 1))}
       >
-        <ChevronLeft className="h-5 w-5" />
+        <ChevronLeft className="h-6 w-6" />
       </Button>
 
       <div className="flex items-center gap-2">
@@ -62,12 +63,13 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
       </div>
 
       <Button
-        variant="ghost"
+        variant="default"
         size="icon"
+        className="h-11 w-11 rounded-full"
         onClick={() => onDateChange(addDays(date, 1))}
         disabled={isToday(date)}
       >
-        <ChevronRight className="h-5 w-5" />
+        <ChevronRight className="h-6 w-6" />
       </Button>
     </div>
     </div>
