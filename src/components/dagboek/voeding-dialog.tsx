@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
 import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
+import { FaBottleWater } from "react-icons/fa6";
 
 const PRESETS = [10, 20, 30, 40, 50, 60, 70, 80, 90];
 
@@ -84,7 +85,10 @@ export function VoedingDialog({
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>🍼 {entry ? "Voeding bewerken" : "Voeding toevoegen"}</DialogTitle>
+          <DialogTitle className="inline-flex items-center gap-2">
+            <FaBottleWater className="text-pink-500" />
+            {entry ? "Voeding bewerken" : "Voeding toevoegen"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">

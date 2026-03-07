@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
 import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
+import { FaNoteSticky } from "react-icons/fa6";
 
 interface OpmerkingDialogProps {
   open: boolean;
@@ -78,7 +79,10 @@ export function OpmerkingDialog({
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>📝 {entry ? "Opmerking bewerken" : "Opmerking toevoegen"}</DialogTitle>
+          <DialogTitle className="inline-flex items-center gap-2">
+            <FaNoteSticky className="text-amber-500" />
+            {entry ? "Opmerking bewerken" : "Opmerking toevoegen"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">

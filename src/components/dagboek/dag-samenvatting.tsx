@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { FaBottleWater, FaBaby } from "react-icons/fa6";
 
 interface DagSamenvattingProps {
   voedingCount: number;
@@ -14,11 +15,13 @@ export function DagSamenvatting({
   return (
     <Card className="mx-4">
       <CardContent className="flex items-center justify-around py-3 text-sm">
-        <span>
-          🍼 {voedingCount} voeding{voedingCount !== 1 ? "en" : ""} · {totalMl}ml
+        <span className="inline-flex items-center gap-1.5">
+          <FaBottleWater className="text-pink-500" />
+          {voedingCount} voeding{voedingCount !== 1 ? "en" : ""} · {totalMl}ml
         </span>
-        <span>
-          🧷 {luierCount} luier{luierCount !== 1 ? "s" : ""}
+        <span className="inline-flex items-center gap-1.5">
+          <FaBaby className="text-blue-500" />
+          {luierCount} luier{luierCount !== 1 ? "s" : ""}
         </span>
       </CardContent>
     </Card>

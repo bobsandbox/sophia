@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
 import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
+import { FaBaby, FaDroplet, FaPoo } from "react-icons/fa6";
 
 interface LuierDialogProps {
   open: boolean;
@@ -81,7 +82,10 @@ export function LuierDialog({
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>🧷 {entry ? "Luier bewerken" : "Luier toevoegen"}</DialogTitle>
+          <DialogTitle className="inline-flex items-center gap-2">
+            <FaBaby className="text-blue-500" />
+            {entry ? "Luier bewerken" : "Luier toevoegen"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -112,7 +116,7 @@ export function LuierDialog({
                   : "border-muted hover:border-muted-foreground/30"
               }`}
             >
-              💧 Pipi
+              <FaDroplet className="inline mr-1.5" /> Pipi
             </button>
             <button
               type="button"
@@ -123,7 +127,7 @@ export function LuierDialog({
                   : "border-muted hover:border-muted-foreground/30"
               }`}
             >
-              💩 Kaka
+              <FaPoo className="inline mr-1.5" /> Kaka
             </button>
           </div>
 

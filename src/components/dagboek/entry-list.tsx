@@ -2,17 +2,13 @@
 
 import type { JournalEntry } from "@/generated/prisma/client";
 import { format } from "date-fns";
+import { FaDroplet, FaPoo, FaTriangleExclamation } from "react-icons/fa6";
+import { EntryIcon } from "./entry-icons";
 
 interface EntryListProps {
   entries: JournalEntry[];
   onEdit: (entry: JournalEntry) => void;
 }
-
-const borderColors = {
-  VOEDING: "border-l-pink-400 dark:border-l-pink-500",
-  LUIER: "border-l-blue-400 dark:border-l-blue-500",
-  OPMERKING: "border-l-amber-400 dark:border-l-amber-500",
-};
 
 export function EntryList({ entries, onEdit }: EntryListProps) {
   if (entries.length === 0) {
@@ -28,37 +24,42 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
       <table className="w-full">
         <thead>
           <tr className="text-xs text-muted-foreground border-b">
+            <th className="pb-2 text-left font-medium w-10"></th>
             <th className="pb-2 text-left font-medium">Tijd</th>
             <th className="pb-2 text-left font-medium">Wie</th>
-            <th className="pb-2 text-center font-medium">🍼 Voeding</th>
-            <th className="pb-2 text-center font-medium">💧 Plas</th>
-            <th className="pb-2 text-center font-medium">💩 Kaka</th>
+            <th className="pb-2 text-center font-medium">Voeding</th>
+            <th className="pb-2 text-center font-medium"><FaDroplet className="inline" /></th>
+            <th className="pb-2 text-center font-medium"><FaPoo className="inline" /></th>
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => {
-            const border = borderColors[entry.entryType] ?? "";
-
-            return entry.entryType === "OPMERKING" ? (
+          {entries.map((entry) =>
+            entry.entryType === "OPMERKING" ? (
               <tr
                 key={entry.id}
                 onClick={() => onEdit(entry)}
-                className={`border-b border-muted/50 border-l-3 ${border} cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted`}
+                className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
               >
-                <td className="py-3 pl-2 text-sm tabular-nums text-muted-foreground">
+                <td className="py-3">
+                  <EntryIcon type="OPMERKING" />
+                </td>
+                <td className="py-3 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
                 <td colSpan={4} className="py-3 text-sm italic text-muted-foreground">
-                  📝 {entry.remark}
+                  {entry.remark}
                 </td>
               </tr>
             ) : (
               <tr
                 key={entry.id}
                 onClick={() => onEdit(entry)}
-                className={`border-b border-muted/50 border-l-3 ${border} cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted`}
+                className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
               >
-                <td className="py-3 pl-2 text-sm tabular-nums text-muted-foreground">
+                <td className="py-3">
+                  <EntryIcon type={entry.entryType} />
+                </td>
+                <td className="py-3 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
                 <td className="py-3 text-sm text-muted-foreground">
@@ -68,7 +69,11 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                   {entry.entryType === "VOEDING" ? (
                     <span className="text-sm font-medium">
                       {entry.amountMl}ml
-                      {entry.braken && <span className="ml-1 text-amber-600 dark:text-amber-400">⚠</span>}
+                      {entry.braken && (
+                        <span className="ml-1 text-amber-600 dark:text-amber-400">
+                          <FaTriangleExclamation className="inline text-xs" />
+                        </span>
+                      )}
                     </span>
                   ) : (
                     <span className="text-muted-foreground/30">-</span>
@@ -76,21 +81,25 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                 </td>
                 <td className="py-3 text-center">
                   {entry.entryType === "LUIER" && entry.pipi ? (
-                    <span className="text-blue-600 dark:text-blue-400">✓</span>
+                    <span className="text-blue-500 dark:text-blue-400">
+                      <FaDroplet className="inline" />
+                    </span>
                   ) : (
                     <span className="text-muted-foreground/30">-</span>
                   )}
                 </td>
                 <td className="py-3 text-center">
                   {entry.entryType === "LUIER" && entry.kaka ? (
-                    <span className="text-amber-600 dark:text-amber-400">✓</span>
+                    <span className="text-amber-600 dark:text-amber-400">
+                      <FaPoo className="inline" />
+                    </span>
                   ) : (
                     <span className="text-muted-foreground/30">-</span>
                   )}
                 </td>
               </tr>
-            );
-          })}
+            )
+          )}
         </tbody>
       </table>
     </div>

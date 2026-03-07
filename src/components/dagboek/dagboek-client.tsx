@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { JournalEntry } from "@/generated/prisma/client";
+import { FaBottleWater, FaBaby, FaNoteSticky } from "react-icons/fa6";
 import { DagHeader } from "./dag-header";
 import { DagSamenvatting } from "./dag-samenvatting";
 import { EntryList } from "./entry-list";
@@ -138,33 +139,34 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
       {/* Sticky bottom quick-add buttons */}
       <div className="sticky bottom-0 flex gap-3 border-t bg-background p-4">
         <Button
-          className="h-12 flex-1 text-base"
+          className="h-12 flex-1 gap-2 text-base"
           onClick={() => {
             setEditEntry(null);
             setVoedingOpen(true);
           }}
         >
-          🍼 Voeding
+          <FaBottleWater /> Voeding
         </Button>
         <Button
           variant="outline"
-          className="h-12 flex-1 text-base"
+          className="h-12 flex-1 gap-2 text-base"
           onClick={() => {
             setEditEntry(null);
             setLuierOpen(true);
           }}
         >
-          🧷 Luier
+          <FaBaby /> Luier
         </Button>
         <Button
           variant="outline"
-          className="h-12 flex-1 text-base"
+          className="h-12 w-12 shrink-0 text-base"
+          size="icon"
           onClick={() => {
             setEditEntry(null);
             setOpmerkingOpen(true);
           }}
         >
-          📝
+          <FaNoteSticky />
         </Button>
       </div>
 
