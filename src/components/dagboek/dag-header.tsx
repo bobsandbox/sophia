@@ -15,7 +15,9 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex items-center justify-between px-4 py-3">
+    <div className="space-y-1 px-4 pt-3 pb-0">
+      <h1 className="text-center text-lg font-semibold">👶 Sophia</h1>
+    <div className="flex items-center justify-between">
       <Button
         variant="ghost"
         size="icon"
@@ -67,6 +69,7 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
       >
         <ChevronRight className="h-5 w-5" />
       </Button>
+    </div>
     </div>
   );
 }

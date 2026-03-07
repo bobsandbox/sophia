@@ -133,23 +133,23 @@ export function VoedingDialog({
             </label>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
             <div className="flex-1">
-              <label className="text-sm font-medium">Datum</label>
+              <label className="text-xs font-medium sm:text-sm">Datum</label>
               <Input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="mt-1"
+                className="mt-1 text-sm"
               />
             </div>
             <div className="flex-1">
-              <label className="text-sm font-medium">Tijdstip</label>
+              <label className="text-xs font-medium sm:text-sm">Tijdstip</label>
               <Input
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="mt-1"
+                className="mt-1 text-sm"
               />
             </div>
           </div>

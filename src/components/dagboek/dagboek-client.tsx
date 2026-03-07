@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { JournalEntry } from "@/generated/prisma/client";
@@ -36,6 +36,13 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
     const json = await res.json();
     setData(json);
   }, []);
+
+  // Poll for live updates every 5s (skip when a dialog is open)
+  useEffect(() => {
+    if (voedingOpen || luierOpen) return;
+    const id = setInterval(() => fetchData(date), 5000);
+    return () => clearInterval(id);
+  }, [date, voedingOpen, luierOpen, fetchData]);
 
   async function handleDateChange(d: Date) {
     setDate(d);

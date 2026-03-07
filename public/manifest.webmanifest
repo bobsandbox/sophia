@@ -1,0 +1,28 @@
+{
+  "name": "Sophia — Dagboek",
+  "short_name": "Sophia",
+  "description": "Dagboek voor Sophia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9f0f3",
+  "theme_color": "#d4658a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
