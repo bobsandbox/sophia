@@ -1,38 +1,9 @@
-const STORAGE_KEY = "sophia-birth-date";
+// Sophia's birth date — hardcoded
+const BIRTH_DATE = "2026-02-21";
+const BIRTH_TIME = "20:30";
 
-export interface BirthDate {
-  date: string; // yyyy-MM-dd
-  time: string; // HH:mm
-}
-
-export function getBirthDate(): BirthDate | null {
-  if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as BirthDate;
-  } catch {
-    return null;
-  }
-}
-
-export function setBirthDate(bd: BirthDate) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(bd));
-}
-
-export function getBirthDateTime(): Date | null {
-  const bd = getBirthDate();
-  if (!bd) return null;
-  const [y, m, d] = bd.date.split("-").map(Number);
-  const [h, min] = bd.time.split(":").map(Number);
-  return new Date(y, m - 1, d, h, min, 0, 0);
-}
-
-/** Returns just the birth date at midnight (for day-based age counting) */
-export function getBirthDay(): Date | null {
-  const bd = getBirthDate();
-  if (!bd) return null;
-  const [y, m, d] = bd.date.split("-").map(Number);
+export function getBirthDay(): Date {
+  const [y, m, d] = BIRTH_DATE.split("-").map(Number);
   return new Date(y, m - 1, d, 0, 0, 0, 0);
 }
 
@@ -45,9 +16,8 @@ export interface AgeBreakdown {
   months: number;
 }
 
-/** Count age based on calendar days (midnight to midnight), not hours */
+/** Count age based on calendar days (midnight to midnight) */
 export function getAge(birthDay: Date, now: Date = new Date()): AgeBreakdown {
-  // Normalize both to midnight for pure day counting
   const birthMidnight = new Date(birthDay.getFullYear(), birthDay.getMonth(), birthDay.getDate());
   const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
