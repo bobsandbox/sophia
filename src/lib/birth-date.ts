@@ -1,0 +1,78 @@
+const STORAGE_KEY = "sophia-birth-date";
+
+export interface BirthDate {
+  date: string; // yyyy-MM-dd
+  time: string; // HH:mm
+}
+
+export function getBirthDate(): BirthDate | null {
+  if (typeof window === "undefined") return null;
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as BirthDate;
+  } catch {
+    return null;
+  }
+}
+
+export function setBirthDate(bd: BirthDate) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(bd));
+}
+
+export function getBirthDateTime(): Date | null {
+  const bd = getBirthDate();
+  if (!bd) return null;
+  const [y, m, d] = bd.date.split("-").map(Number);
+  const [h, min] = bd.time.split(":").map(Number);
+  return new Date(y, m - 1, d, h, min, 0, 0);
+}
+
+export interface AgeBreakdown {
+  totalDays: number;
+  totalWeeks: number;
+  totalMonths: number;
+  days: number;
+  weeks: number;
+  months: number;
+}
+
+export function getAge(birthDateTime: Date, now: Date = new Date()): AgeBreakdown {
+  const diffMs = now.getTime() - birthDateTime.getTime();
+  const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const totalWeeks = Math.floor(totalDays / 7);
+
+  // Calculate months more precisely
+  let months = (now.getFullYear() - birthDateTime.getFullYear()) * 12 + (now.getMonth() - birthDateTime.getMonth());
+  if (now.getDate() < birthDateTime.getDate()) months--;
+  if (months < 0) months = 0;
+
+  const remainingDaysInWeek = totalDays % 7;
+  const weeksAfterMonths = Math.floor((totalDays - months * 30.44) / 7);
+
+  return {
+    totalDays,
+    totalWeeks,
+    totalMonths: months,
+    days: remainingDaysInWeek,
+    weeks: weeksAfterMonths < 0 ? 0 : weeksAfterMonths,
+    months,
+  };
+}
+
+export function formatAge(age: AgeBreakdown): string {
+  if (age.totalDays < 0) return "";
+  if (age.totalDays === 0) return "Vandaag geboren!";
+  if (age.totalDays === 1) return "1 dag oud";
+  if (age.totalDays < 14) return `${age.totalDays} dagen oud`;
+  if (age.totalWeeks < 9) {
+    const w = age.totalWeeks;
+    const d = age.days;
+    if (d === 0) return `${w} weken oud`;
+    return `${w} weken en ${d} ${d === 1 ? "dag" : "dagen"} oud`;
+  }
+  const m = age.months;
+  const remainingWeeks = Math.floor((age.totalDays - Math.round(m * 30.44)) / 7);
+  if (remainingWeeks <= 0) return `${m} ${m === 1 ? "maand" : "maanden"} oud`;
+  return `${m} ${m === 1 ? "maand" : "maanden"} en ${remainingWeeks} ${remainingWeeks === 1 ? "week" : "weken"} oud`;
+}

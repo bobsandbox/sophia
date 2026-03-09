@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { format, addDays, subDays, isToday } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useRef } from "react";
+import { AgeCounter } from "./age-counter";
 
 interface DagHeaderProps {
   date: Date;
@@ -17,6 +18,7 @@ export function DagHeader({ date, onDateChange }: DagHeaderProps) {
   return (
     <div className="space-y-1 px-4 pt-3 pb-0">
       <img src="/sophia-logo.png" alt="Sophia" className="mx-auto h-10" />
+      <AgeCounter />
     <div className="flex items-center justify-between">
       <Button
         variant="default"
