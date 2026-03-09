@@ -25,7 +25,7 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
         <thead>
           <tr className="text-xs text-muted-foreground border-b">
             <th className="pb-2 text-left font-medium w-10"></th>
-            <th className="pb-2 text-left font-medium">Tijd</th>
+            <th className="pb-2 text-left font-medium min-w-14">Tijd</th>
             <th className="pb-2 text-left font-medium">Wie</th>
             <th className="pb-2 text-center font-medium">Voeding</th>
             <th className="pb-2 text-center font-medium"><FaDroplet className="inline" /></th>
