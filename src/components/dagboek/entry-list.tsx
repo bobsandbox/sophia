@@ -21,7 +21,7 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
 
   return (
     <div className="flex-1 overflow-y-auto px-4 mt-3">
-      <table className="w-full">
+      <table className="w-full border-separate border-spacing-x-2 border-spacing-y-0">
         <thead>
           <tr className="text-xs text-muted-foreground border-b">
             <th className="pb-2 text-left font-medium w-10"></th>
@@ -40,13 +40,13 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                 onClick={() => onEdit(entry)}
                 className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
               >
-                <td className="py-3">
+                <td className="py-2.5">
                   <EntryIcon type="OPMERKING" />
                 </td>
-                <td className="py-3 text-sm tabular-nums text-muted-foreground">
+                <td className="py-2.5 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
-                <td colSpan={4} className="py-3 text-sm italic text-muted-foreground">
+                <td colSpan={4} className="py-2.5 text-xs italic text-muted-foreground">
                   {entry.remark}
                 </td>
               </tr>
@@ -56,16 +56,16 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                 onClick={() => onEdit(entry)}
                 className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
               >
-                <td className="py-3">
+                <td className="py-2.5">
                   <EntryIcon type={entry.entryType} />
                 </td>
-                <td className="py-3 text-sm tabular-nums text-muted-foreground">
+                <td className="py-2.5 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
-                <td className="py-3 text-sm text-muted-foreground">
+                <td className="py-2.5 text-sm text-muted-foreground">
                   {entry.person ?? "-"}
                 </td>
-                <td className="py-3 text-center">
+                <td className="py-2.5 text-center">
                   {entry.entryType === "VOEDING" ? (
                     <span className="text-sm font-medium">
                       {entry.amountMl}ml
@@ -79,7 +79,7 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                     <span className="text-muted-foreground/30">-</span>
                   )}
                 </td>
-                <td className="py-3 text-center">
+                <td className="py-2.5 text-center">
                   {entry.entryType === "LUIER" && entry.pipi ? (
                     <span className="text-blue-500 dark:text-blue-400">
                       <FaDroplet className="inline" />
@@ -88,7 +88,7 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                     <span className="text-muted-foreground/30">-</span>
                   )}
                 </td>
-                <td className="py-3 text-center">
+                <td className="py-2.5 text-center">
                   {entry.entryType === "LUIER" && entry.kaka ? (
                     <span className="text-amber-600 dark:text-amber-400">
                       <FaPoo className="inline" />
