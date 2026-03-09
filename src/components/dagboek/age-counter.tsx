@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getBirthDateTime, getAge, formatAge } from "@/lib/birth-date";
+import { getBirthDay, getAge, formatAge } from "@/lib/birth-date";
 import Link from "next/link";
 import { Settings } from "lucide-react";
 
@@ -10,7 +10,7 @@ export function AgeCounter() {
 
   useEffect(() => {
     function update() {
-      const birth = getBirthDateTime();
+      const birth = getBirthDay();
       if (!birth) {
         setLabel(null);
         return;

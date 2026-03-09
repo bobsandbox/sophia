@@ -28,6 +28,14 @@ export function getBirthDateTime(): Date | null {
   return new Date(y, m - 1, d, h, min, 0, 0);
 }
 
+/** Returns just the birth date at midnight (for day-based age counting) */
+export function getBirthDay(): Date | null {
+  const bd = getBirthDate();
+  if (!bd) return null;
+  const [y, m, d] = bd.date.split("-").map(Number);
+  return new Date(y, m - 1, d, 0, 0, 0, 0);
+}
+
 export interface AgeBreakdown {
   totalDays: number;
   totalWeeks: number;
@@ -37,18 +45,22 @@ export interface AgeBreakdown {
   months: number;
 }
 
-export function getAge(birthDateTime: Date, now: Date = new Date()): AgeBreakdown {
-  const diffMs = now.getTime() - birthDateTime.getTime();
-  const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+/** Count age based on calendar days (midnight to midnight), not hours */
+export function getAge(birthDay: Date, now: Date = new Date()): AgeBreakdown {
+  // Normalize both to midnight for pure day counting
+  const birthMidnight = new Date(birthDay.getFullYear(), birthDay.getMonth(), birthDay.getDate());
+  const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const diffMs = nowMidnight.getTime() - birthMidnight.getTime();
+  const totalDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
   const totalWeeks = Math.floor(totalDays / 7);
 
-  // Calculate months more precisely
-  let months = (now.getFullYear() - birthDateTime.getFullYear()) * 12 + (now.getMonth() - birthDateTime.getMonth());
-  if (now.getDate() < birthDateTime.getDate()) months--;
+  let months = (nowMidnight.getFullYear() - birthMidnight.getFullYear()) * 12 + (nowMidnight.getMonth() - birthMidnight.getMonth());
+  if (nowMidnight.getDate() < birthMidnight.getDate()) months--;
   if (months < 0) months = 0;
 
   const remainingDaysInWeek = totalDays % 7;
-  const weeksAfterMonths = Math.floor((totalDays - months * 30.44) / 7);
+  const weeksAfterMonths = Math.floor((totalDays - Math.round(months * 30.44)) / 7);
 
   return {
     totalDays,
