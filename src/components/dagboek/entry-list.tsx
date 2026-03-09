@@ -46,7 +46,7 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                 <td className="py-2.5 px-2 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
-                <td colSpan={4} className="py-2.5 px-2 text-xs italic text-muted-foreground">
+                <td colSpan={4} className="py-2.5 px-2 text-xs italic text-primary">
                   {entry.remark}
                 </td>
               </tr>
