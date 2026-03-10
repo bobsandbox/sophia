@@ -1,5 +1,5 @@
 // Sophia's birth date — hardcoded
-const BIRTH_DATE = "2026-02-21";
+const BIRTH_DATE = "2026-02-26";
 const BIRTH_TIME = "20:30";
 
 export function getBirthDay(): Date {
