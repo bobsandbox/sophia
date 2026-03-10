@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEntriesByDate, getDailySummary, createEntry } from "@/lib/services/journal";
 import { entrySchema } from "@/lib/validations/journal";
-import { parseISO } from "date-fns";
+import { format } from "date-fns";
 
 export async function GET(request: NextRequest) {
   const dateParam = request.nextUrl.searchParams.get("date");
-  const date = dateParam ? parseISO(dateParam) : new Date();
+  // Pass the date as a yyyy-MM-dd string to preserve the intended calendar day
+  const dateStr = dateParam ?? format(new Date(), "yyyy-MM-dd");
 
   const [entries, summary] = await Promise.all([
-    getEntriesByDate(date),
-    getDailySummary(date),
+    getEntriesByDate(dateStr),
+    getDailySummary(dateStr),
   ]);
 
   return NextResponse.json({ entries, summary });

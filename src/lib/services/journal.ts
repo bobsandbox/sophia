@@ -1,21 +1,36 @@
 import { prisma } from "@/lib/prisma";
-import { startOfDay, endOfDay } from "date-fns";
 import type { EntryInput } from "@/lib/validations/journal";
 
-export async function getEntriesByDate(date: Date) {
+const TZ = "Europe/Brussels";
+
+/** Get start/end of day in Brussels timezone, regardless of server TZ */
+function dayBounds(dateStr: string) {
+  const startUtc = new Date(`${dateStr}T00:00:00+${getBrusselsOffset(dateStr)}`);
+  const endUtc = new Date(startUtc.getTime() + 24 * 60 * 60 * 1000 - 1);
+  return { gte: startUtc, lte: endUtc };
+}
+
+function getBrusselsOffset(dateStr: string): string {
+  // Determine if Brussels is CET (+01:00) or CEST (+02:00) on this date
+  const d = new Date(`${dateStr}T12:00:00Z`);
+  const utcStr = d.toLocaleString("en-US", { timeZone: "UTC", hour12: false });
+  const brStr = d.toLocaleString("en-US", { timeZone: TZ, hour12: false });
+  const utcHour = new Date(utcStr).getHours();
+  const brHour = new Date(brStr).getHours();
+  const diff = ((brHour - utcHour) + 24) % 24;
+  return diff === 2 ? "02:00" : "01:00";
+}
+
+export async function getEntriesByDate(dateStr: string) {
+  const bounds = dayBounds(dateStr);
   return prisma.journalEntry.findMany({
-    where: {
-      timestamp: {
-        gte: startOfDay(date),
-        lte: endOfDay(date),
-      },
-    },
+    where: { timestamp: bounds },
     orderBy: { timestamp: "desc" },
   });
 }
 
-export async function getDailySummary(date: Date) {
-  const entries = await getEntriesByDate(date);
+export async function getDailySummary(dateStr: string) {
+  const entries = await getEntriesByDate(dateStr);
 
   const voedingen = entries.filter((e) => e.entryType === "VOEDING");
   const luiers = entries.filter((e) => e.entryType === "LUIER");

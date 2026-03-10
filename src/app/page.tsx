@@ -12,12 +12,10 @@ export default async function Home({
   const { date: dateParam } = await searchParams;
   const today = format(new Date(), "yyyy-MM-dd");
   const dateStr = dateParam ?? today;
-  const [y, m, d] = dateStr.split("-").map(Number);
-  const date = new Date(y, m - 1, d);
 
   const [entries, summary] = await Promise.all([
-    getEntriesByDate(date),
-    getDailySummary(date),
+    getEntriesByDate(dateStr),
+    getDailySummary(dateStr),
   ]);
 
   return (
