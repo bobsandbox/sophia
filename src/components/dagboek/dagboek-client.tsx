@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { JournalEntry } from "@/generated/prisma/client";
@@ -33,6 +33,7 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
   const [luierOpen, setLuierOpen] = useState(false);
   const [opmerkingOpen, setOpmerkingOpen] = useState(false);
   const [editEntry, setEditEntry] = useState<JournalEntry | null>(null);
+  const saving = useRef(false);
 
   const fetchData = useCallback(async (d: Date) => {
     const res = await fetch(`/api/entries?date=${format(d, "yyyy-MM-dd")}`);
@@ -64,6 +65,8 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
   }
 
   async function handleSaveEntry(body: { entryType: string; timestamp: string; [key: string]: unknown }) {
+    if (saving.current) return;
+    saving.current = true;
     try {
       if (editEntry) {
         await fetch(`/api/entries/${editEntry.id}`, {
@@ -99,6 +102,8 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
       }
     } catch {
       toast.error("Er ging iets mis");
+    } finally {
+      saving.current = false;
     }
   }
 
