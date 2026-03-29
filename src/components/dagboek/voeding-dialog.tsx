@@ -16,7 +16,7 @@ import type { JournalEntry } from "@/generated/prisma/client";
 import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
 import { FaBottleWater } from "react-icons/fa6";
 
-const PRESETS = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+const PRESETS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
 
 interface VoedingDialogProps {
   open: boolean;
