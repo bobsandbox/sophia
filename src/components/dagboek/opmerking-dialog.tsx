@@ -30,6 +30,11 @@ interface OpmerkingDialogProps {
   selectedDate: Date;
 }
 
+interface FrequentRemark {
+  text: string;
+  count: number;
+}
+
 export function OpmerkingDialog({
   open,
   onClose,
@@ -42,6 +47,7 @@ export function OpmerkingDialog({
   const [person, setPerson] = useState(getLastPerson());
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [time, setTime] = useState(format(new Date(), "HH:mm"));
+  const [suggestions, setSuggestions] = useState<FrequentRemark[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -56,6 +62,12 @@ export function OpmerkingDialog({
         setDate(format(selectedDate, "yyyy-MM-dd"));
         setTime(format(new Date(), "HH:mm"));
       }
+
+      // Fetch frequent remarks
+      fetch("/api/remarks")
+        .then((r) => r.json())
+        .then((data) => setSuggestions(data))
+        .catch(() => {});
     }
   }, [open, entry, selectedDate]);
 
@@ -102,6 +114,28 @@ export function OpmerkingDialog({
               ))}
             </div>
           </div>
+
+          {suggestions.length > 0 && !entry && (
+            <div>
+              <label className="text-sm font-medium">Veelgebruikt</label>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {suggestions.map((s) => (
+                  <button
+                    key={s.text}
+                    type="button"
+                    onClick={() => setRemark(s.text)}
+                    className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+                      remark === s.text
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-muted-foreground/20 hover:border-primary/50 hover:bg-muted"
+                    }`}
+                  >
+                    {s.text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="text-sm font-medium">Opmerking</label>

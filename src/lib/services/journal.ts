@@ -128,3 +128,17 @@ export async function updateEntry(id: string, data: EntryInput) {
 export async function deleteEntry(id: string) {
   return prisma.journalEntry.delete({ where: { id } });
 }
+
+/** Get most-used remarks, ordered by frequency */
+export async function getFrequentRemarks(limit = 10) {
+  const results = await prisma.journalEntry.groupBy({
+    by: ["remark"],
+    where: { entryType: "OPMERKING", remark: { not: null } },
+    _count: { remark: true },
+    orderBy: { _count: { remark: "desc" } },
+    take: limit,
+  });
+  return results
+    .filter((r) => r.remark)
+    .map((r) => ({ text: r.remark!, count: r._count.remark }));
+}
