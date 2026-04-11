@@ -65,7 +65,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Toaster richColors />
+          <Toaster
+            position="top-center"
+            duration={1500}
+            toastOptions={{ className: "justify-center text-center" }}
+          />
         </ThemeProvider>
       </body>
     </html>
