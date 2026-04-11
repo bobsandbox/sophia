@@ -23,13 +23,22 @@ export const opmerkingSchema = z.object({
   remark: z.string().min(1),
 });
 
+export const notitieSchema = z.object({
+  entryType: z.literal("NOTITIE"),
+  timestamp: z.coerce.date(),
+  person: z.string().optional(),
+  labels: z.array(z.string()).min(1),
+});
+
 export const entrySchema = z.discriminatedUnion("entryType", [
   voedingSchema,
   luierSchema,
   opmerkingSchema,
+  notitieSchema,
 ]);
 
 export type VoedingInput = z.infer<typeof voedingSchema>;
 export type LuierInput = z.infer<typeof luierSchema>;
 export type OpmerkingInput = z.infer<typeof opmerkingSchema>;
+export type NotitieInput = z.infer<typeof notitieSchema>;
 export type EntryInput = z.infer<typeof entrySchema>;

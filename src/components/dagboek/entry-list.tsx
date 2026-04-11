@@ -33,24 +33,43 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) =>
-            entry.entryType === "OPMERKING" ? (
-              <tr
-                key={entry.id}
-                onClick={() => onEdit(entry)}
-                className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
-              >
-                <td className="py-2.5 pl-1 pr-2">
-                  <EntryIcon type="OPMERKING" />
-                </td>
-                <td className="py-2.5 px-2 text-sm tabular-nums text-muted-foreground">
-                  {format(new Date(entry.timestamp), "HH:mm")}
-                </td>
-                <td colSpan={4} className="py-2.5 px-2 text-xs italic text-primary">
-                  {entry.remark}
-                </td>
-              </tr>
-            ) : (
+          {entries.map((entry) => {
+            // Full-width rows for OPMERKING and NOTITIE
+            if (entry.entryType === "OPMERKING" || entry.entryType === "NOTITIE") {
+              return (
+                <tr
+                  key={entry.id}
+                  onClick={() => onEdit(entry)}
+                  className="border-b border-muted/50 cursor-pointer transition-colors hover:bg-muted/50 active:bg-muted"
+                >
+                  <td className="py-2.5 pl-1 pr-2">
+                    <EntryIcon type={entry.entryType} />
+                  </td>
+                  <td className="py-2.5 px-2 text-sm tabular-nums text-muted-foreground">
+                    {format(new Date(entry.timestamp), "HH:mm")}
+                  </td>
+                  <td colSpan={4} className="py-2.5 px-2">
+                    {entry.entryType === "OPMERKING" ? (
+                      <span className="text-xs italic text-primary">{entry.remark}</span>
+                    ) : (
+                      <div className="flex flex-wrap gap-1">
+                        {entry.labels.map((label) => (
+                          <span
+                            key={label}
+                            className="rounded-full bg-teal-100 px-2 py-0.5 text-[11px] font-medium text-teal-700 dark:bg-teal-900/50 dark:text-teal-300"
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              );
+            }
+
+            // Regular data rows for VOEDING and LUIER
+            return (
               <tr
                 key={entry.id}
                 onClick={() => onEdit(entry)}
@@ -98,8 +117,8 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                   )}
                 </td>
               </tr>
-            )
-          )}
+            );
+          })}
         </tbody>
       </table>
     </div>

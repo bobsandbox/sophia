@@ -17,6 +17,7 @@ enum EntryType {
   VOEDING
   LUIER
   OPMERKING
+  NOTITIE
 }
 
 model JournalEntry {
@@ -38,5 +39,15 @@ model JournalEntry {
   // Opmerking fields (null when not OPMERKING)
   remark    String?
 
+  // Notitie fields — quick labels
+  labels    String[]  @default([])
+
   @@index([timestamp])
+}
+
+model Label {
+  id        String @id @default(cuid())
+  name      String @unique
+  sortOrder Int    @default(0)
+  createdAt DateTime @default(now())
 }

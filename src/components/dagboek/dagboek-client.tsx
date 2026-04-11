@@ -4,13 +4,14 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { JournalEntry } from "@/generated/prisma/client";
-import { FaBottleWater, FaBaby, FaNoteSticky } from "react-icons/fa6";
+import { FaBottleWater, FaBaby, FaNoteSticky, FaTags } from "react-icons/fa6";
 import { DagHeader } from "./dag-header";
 import { DagSamenvatting } from "./dag-samenvatting";
 import { EntryList } from "./entry-list";
 import { VoedingDialog } from "./voeding-dialog";
 import { LuierDialog } from "./luier-dialog";
 import { OpmerkingDialog } from "./opmerking-dialog";
+import { NotitieDialog } from "./notitie-dialog";
 import { Button } from "@/components/ui/button";
 
 interface DagboekData {
@@ -32,8 +33,11 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
   const [voedingOpen, setVoedingOpen] = useState(false);
   const [luierOpen, setLuierOpen] = useState(false);
   const [opmerkingOpen, setOpmerkingOpen] = useState(false);
+  const [notitieOpen, setNotitieOpen] = useState(false);
   const [editEntry, setEditEntry] = useState<JournalEntry | null>(null);
   const saving = useRef(false);
+
+  const anyDialogOpen = voedingOpen || luierOpen || opmerkingOpen || notitieOpen;
 
   const fetchData = useCallback(async (d: Date) => {
     const res = await fetch(`/api/entries?date=${format(d, "yyyy-MM-dd")}`);
@@ -43,10 +47,10 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
 
   // Poll for live updates every 5s (skip when a dialog is open)
   useEffect(() => {
-    if (voedingOpen || luierOpen || opmerkingOpen) return;
+    if (anyDialogOpen) return;
     const id = setInterval(() => fetchData(date), 5000);
     return () => clearInterval(id);
-  }, [date, voedingOpen, luierOpen, opmerkingOpen, fetchData]);
+  }, [date, anyDialogOpen, fetchData]);
 
   async function handleDateChange(d: Date) {
     setDate(d);
@@ -55,42 +59,38 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
 
   function handleEdit(entry: JournalEntry) {
     setEditEntry(entry);
-    if (entry.entryType === "VOEDING") {
-      setVoedingOpen(true);
-    } else if (entry.entryType === "LUIER") {
-      setLuierOpen(true);
-    } else {
-      setOpmerkingOpen(true);
-    }
+    if (entry.entryType === "VOEDING") setVoedingOpen(true);
+    else if (entry.entryType === "LUIER") setLuierOpen(true);
+    else if (entry.entryType === "OPMERKING") setOpmerkingOpen(true);
+    else setNotitieOpen(true);
   }
 
   async function handleSaveEntry(body: { entryType: string; timestamp: string; [key: string]: unknown }) {
     if (saving.current) return;
     saving.current = true;
     try {
+      const labels: Record<string, string> = {
+        VOEDING: "Voeding", LUIER: "Luier", OPMERKING: "Opmerking", NOTITIE: "Notitie",
+      };
+      const typeName = labels[body.entryType] ?? "Entry";
+
       if (editEntry) {
         await fetch(`/api/entries/${editEntry.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        const labels: Record<string, string> = { VOEDING: "Voeding bijgewerkt", LUIER: "Luier bijgewerkt", OPMERKING: "Opmerking bijgewerkt" };
-        toast.success(labels[body.entryType] ?? "Bijgewerkt");
+        toast.success(`${typeName} bijgewerkt`);
       } else {
         await fetch("/api/entries", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        const addLabels: Record<string, string> = { VOEDING: "Voeding toegevoegd", LUIER: "Luier toegevoegd", OPMERKING: "Opmerking toegevoegd" };
-        toast.success(addLabels[body.entryType] ?? "Toegevoegd");
+        toast.success(`${typeName} toegevoegd`);
       }
-      setVoedingOpen(false);
-      setLuierOpen(false);
-      setOpmerkingOpen(false);
-      setEditEntry(null);
+      closeDialogs();
 
-      // Navigate to the date of the saved entry
       const entryDate = new Date(body.timestamp);
       const entryDay = new Date(entryDate.getFullYear(), entryDate.getMonth(), entryDate.getDate());
       const currentDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -112,10 +112,7 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
     try {
       await fetch(`/api/entries/${editEntry.id}`, { method: "DELETE" });
       toast.success("Verwijderd");
-      setVoedingOpen(false);
-      setLuierOpen(false);
-      setOpmerkingOpen(false);
-      setEditEntry(null);
+      closeDialogs();
       await fetchData(date);
     } catch {
       toast.error("Er ging iets mis");
@@ -126,6 +123,7 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
     setVoedingOpen(false);
     setLuierOpen(false);
     setOpmerkingOpen(false);
+    setNotitieOpen(false);
     setEditEntry(null);
   }
 
@@ -145,20 +143,14 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
       <div className="sticky bottom-0 flex gap-3 border-t bg-background p-4">
         <Button
           className="h-12 flex-1 gap-2 text-base"
-          onClick={() => {
-            setEditEntry(null);
-            setVoedingOpen(true);
-          }}
+          onClick={() => { setEditEntry(null); setVoedingOpen(true); }}
         >
           <FaBottleWater /> Voeding
         </Button>
         <Button
           variant="outline"
           className="h-12 flex-1 gap-2 text-base"
-          onClick={() => {
-            setEditEntry(null);
-            setLuierOpen(true);
-          }}
+          onClick={() => { setEditEntry(null); setLuierOpen(true); }}
         >
           <FaBaby /> Luier
         </Button>
@@ -166,10 +158,15 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
           variant="outline"
           className="h-12 w-12 shrink-0 text-base"
           size="icon"
-          onClick={() => {
-            setEditEntry(null);
-            setOpmerkingOpen(true);
-          }}
+          onClick={() => { setEditEntry(null); setNotitieOpen(true); }}
+        >
+          <FaTags />
+        </Button>
+        <Button
+          variant="outline"
+          className="h-12 w-12 shrink-0 text-base"
+          size="icon"
+          onClick={() => { setEditEntry(null); setOpmerkingOpen(true); }}
         >
           <FaNoteSticky />
         </Button>
@@ -199,6 +196,15 @@ export function DagboekClient({ initialDate, initialData }: DagboekClientProps) 
         onSave={handleSaveEntry}
         onDelete={editEntry ? handleDelete : undefined}
         entry={editEntry?.entryType === "OPMERKING" ? editEntry : null}
+        selectedDate={date}
+      />
+
+      <NotitieDialog
+        open={notitieOpen}
+        onClose={closeDialogs}
+        onSave={handleSaveEntry}
+        onDelete={editEntry ? handleDelete : undefined}
+        entry={editEntry?.entryType === "NOTITIE" ? editEntry : null}
         selectedDate={date}
       />
     </div>

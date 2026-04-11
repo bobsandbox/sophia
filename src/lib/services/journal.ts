@@ -11,7 +11,6 @@ function dayBounds(dateStr: string) {
 }
 
 function getBrusselsOffset(dateStr: string): string {
-  // Determine if Brussels is CET (+01:00) or CEST (+02:00) on this date
   const d = new Date(`${dateStr}T12:00:00Z`);
   const utcStr = d.toLocaleString("en-US", { timeZone: "UTC", hour12: false });
   const brStr = d.toLocaleString("en-US", { timeZone: TZ, hour12: false });
@@ -67,61 +66,61 @@ export async function createEntry(data: EntryInput) {
     });
   }
 
+  if (data.entryType === "OPMERKING") {
+    return prisma.journalEntry.create({
+      data: {
+        timestamp: data.timestamp,
+        entryType: "OPMERKING",
+        person: data.person,
+        remark: data.remark,
+      },
+    });
+  }
+
   return prisma.journalEntry.create({
     data: {
       timestamp: data.timestamp,
-      entryType: "OPMERKING",
+      entryType: "NOTITIE",
       person: data.person,
-      remark: data.remark,
+      labels: data.labels,
     },
   });
 }
 
 export async function updateEntry(id: string, data: EntryInput) {
+  const clear = {
+    amountMl: null as number | null,
+    braken: null as boolean | null,
+    pipi: null as boolean | null,
+    kaka: null as boolean | null,
+    remark: null as string | null,
+    labels: [] as string[],
+  };
+
   if (data.entryType === "VOEDING") {
     return prisma.journalEntry.update({
       where: { id },
-      data: {
-        timestamp: data.timestamp,
-        entryType: "VOEDING",
-        person: data.person,
-        amountMl: data.amountMl,
-        braken: data.braken,
-        pipi: null,
-        kaka: null,
-        remark: null,
-      },
+      data: { ...clear, timestamp: data.timestamp, entryType: "VOEDING", person: data.person, amountMl: data.amountMl, braken: data.braken },
     });
   }
 
   if (data.entryType === "LUIER") {
     return prisma.journalEntry.update({
       where: { id },
-      data: {
-        timestamp: data.timestamp,
-        entryType: "LUIER",
-        person: data.person,
-        pipi: data.pipi,
-        kaka: data.kaka,
-        amountMl: null,
-        braken: null,
-        remark: null,
-      },
+      data: { ...clear, timestamp: data.timestamp, entryType: "LUIER", person: data.person, pipi: data.pipi, kaka: data.kaka },
+    });
+  }
+
+  if (data.entryType === "OPMERKING") {
+    return prisma.journalEntry.update({
+      where: { id },
+      data: { ...clear, timestamp: data.timestamp, entryType: "OPMERKING", person: data.person, remark: data.remark },
     });
   }
 
   return prisma.journalEntry.update({
     where: { id },
-    data: {
-      timestamp: data.timestamp,
-      entryType: "OPMERKING",
-      person: data.person,
-      remark: data.remark,
-      amountMl: null,
-      braken: null,
-      pipi: null,
-      kaka: null,
-    },
+    data: { ...clear, timestamp: data.timestamp, entryType: "NOTITIE", person: data.person, labels: data.labels },
   });
 }
 
@@ -141,4 +140,20 @@ export async function getFrequentRemarks(limit = 10) {
   return results
     .filter((r) => r.remark)
     .map((r) => ({ text: r.remark!, count: r._count.remark }));
+}
+
+// Label CRUD
+export async function getLabels() {
+  return prisma.label.findMany({ orderBy: { sortOrder: "asc" } });
+}
+
+export async function createLabel(name: string) {
+  const max = await prisma.label.aggregate({ _max: { sortOrder: true } });
+  return prisma.label.create({
+    data: { name, sortOrder: (max._max.sortOrder ?? 0) + 1 },
+  });
+}
+
+export async function deleteLabel(id: string) {
+  return prisma.label.delete({ where: { id } });
 }
