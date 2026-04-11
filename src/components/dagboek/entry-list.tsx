@@ -50,7 +50,9 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                   </td>
                   <td colSpan={4} className="py-2.5 px-2">
                     {entry.entryType === "OPMERKING" ? (
-                      <span className="text-xs italic text-primary">{entry.remark}</span>
+                      <span className="inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-medium text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+                        {entry.remark}
+                      </span>
                     ) : (
                       <div className="flex flex-wrap gap-1">
                         {entry.labels.map((label) => (
