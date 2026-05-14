@@ -4,6 +4,7 @@ import type { JournalEntry } from "@/generated/prisma/client";
 import { format } from "date-fns";
 import { FaDroplet, FaPoo, FaTriangleExclamation } from "react-icons/fa6";
 import { EntryIcon } from "./entry-icons";
+import { getPersonColor } from "@/lib/person";
 
 interface EntryListProps {
   entries: JournalEntry[];
@@ -83,8 +84,15 @@ export function EntryList({ entries, onEdit }: EntryListProps) {
                 <td className="py-2.5 px-2 text-sm tabular-nums text-muted-foreground">
                   {format(new Date(entry.timestamp), "HH:mm")}
                 </td>
-                <td className="py-2.5 px-2 text-sm text-muted-foreground">
-                  {entry.person ?? "-"}
+                <td className="py-2.5 px-2 text-sm">
+                  {entry.person ? (
+                    <span className={`inline-flex items-center gap-1.5 ${getPersonColor(entry.person).text}`}>
+                      <span className={`inline-block h-2 w-2 rounded-full ${getPersonColor(entry.person).dot}`} />
+                      {entry.person}
+                    </span>
+                  ) : (
+                    "-"
+                  )}
                 </td>
                 <td className="py-2.5 px-2 text-center">
                   {entry.entryType === "VOEDING" ? (

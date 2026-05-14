@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
-import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
+import { getLastPerson, setLastPerson } from "@/lib/person";
+import { PersonCarousel } from "./person-carousel";
 import { FaBottleWater } from "react-icons/fa6";
 
 const PRESETS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
@@ -92,22 +93,7 @@ export function VoedingDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium">Wie</label>
-            <div className="mt-2 flex gap-2">
-              {PEOPLE.map((p) => (
-                <Button
-                  key={p}
-                  variant={person === p ? "default" : "outline"}
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => setPerson(p)}
-                >
-                  {p}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <PersonCarousel value={person} onChange={setPerson} />
 
           <div>
             <label className="text-sm font-medium">Hoeveelheid (ml)</label>

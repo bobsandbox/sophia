@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
-import { PEOPLE, getLastPerson, setLastPerson } from "@/lib/person";
+import { getLastPerson, setLastPerson } from "@/lib/person";
+import { PersonCarousel } from "./person-carousel";
 import { FaNoteSticky } from "react-icons/fa6";
 
 interface OpmerkingDialogProps {
@@ -98,22 +99,7 @@ export function OpmerkingDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium">Wie</label>
-            <div className="mt-2 flex gap-2">
-              {PEOPLE.map((p) => (
-                <Button
-                  key={p}
-                  variant={person === p ? "default" : "outline"}
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => setPerson(p)}
-                >
-                  {p}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <PersonCarousel value={person} onChange={setPerson} />
 
           {suggestions.length > 0 && !entry && (
             <div>
