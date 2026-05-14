@@ -4,7 +4,6 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml ./
-ENV PNPM_ALLOW_BUILD_SCRIPTS=true
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder

@@ -30,7 +30,10 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@prisma/engines",
-      "prisma"
+      "msw",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
     ]
   },
   "devDependencies": {
