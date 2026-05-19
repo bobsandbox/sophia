@@ -97,7 +97,7 @@ export function VoedingDialog({
 
           <div>
             <label className="text-sm font-medium">Hoeveelheid (ml)</label>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap justify-center gap-2">
               {PRESETS.map((ml) => (
                 <Button
                   key={ml}
