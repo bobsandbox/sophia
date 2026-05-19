@@ -15,9 +15,9 @@ import { format } from "date-fns";
 import type { JournalEntry } from "@/generated/prisma/client";
 import { getLastPerson, setLastPerson } from "@/lib/person";
 import { PersonCarousel } from "./person-carousel";
-import { FaBottleWater } from "react-icons/fa6";
+import { FaBottleWater, FaMinus, FaPlus } from "react-icons/fa6";
 
-const PRESETS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 180, 210];
+const PRESETS = [30, 60, 90, 120, 150, 180, 210];
 
 interface VoedingDialogProps {
   open: boolean;
@@ -109,6 +109,27 @@ export function VoedingDialog({
                   {ml}
                 </Button>
               ))}
+            </div>
+            <div className="mt-2 flex items-center justify-center gap-3">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 rounded-full"
+                onClick={() => setAmountMl(Math.max(10, amountMl - 10))}
+              >
+                <FaMinus className="text-xs" />
+              </Button>
+              <span className="min-w-[60px] text-center text-lg font-semibold tabular-nums">
+                {amountMl} ml
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 rounded-full"
+                onClick={() => setAmountMl(amountMl + 10)}
+              >
+                <FaPlus className="text-xs" />
+              </Button>
             </div>
           </div>
 
