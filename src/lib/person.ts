@@ -1,4 +1,4 @@
-export const PEOPLE = ["Bob", "Agnes", "Joselien", "Melanie"] as const;
+export const PEOPLE = ["Bob", "Agnes", "Joselien", "Melanie", "Marie-Rose", "Eric"] as const;
 
 export type PersonName = (typeof PEOPLE)[number];
 
@@ -29,6 +29,18 @@ export const PERSON_COLORS: Record<
     text: "text-rose-700 dark:text-rose-300",
     border: "border-rose-400 dark:border-rose-600",
     dot: "bg-rose-500",
+  },
+  "Marie-Rose": {
+    bg: "bg-fuchsia-100 dark:bg-fuchsia-900/50",
+    text: "text-fuchsia-700 dark:text-fuchsia-300",
+    border: "border-fuchsia-400 dark:border-fuchsia-600",
+    dot: "bg-fuchsia-500",
+  },
+  Eric: {
+    bg: "bg-amber-100 dark:bg-amber-900/50",
+    text: "text-amber-700 dark:text-amber-300",
+    border: "border-amber-400 dark:border-amber-600",
+    dot: "bg-amber-500",
   },
 };
 
