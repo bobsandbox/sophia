@@ -156,7 +156,7 @@ export function OpmerkingDialog({
           </div>
         </div>
 
-        <DialogFooter className="flex-row gap-2">
+        <DialogFooter className="flex-row flex-wrap gap-2">
           {entry && onDelete && (
             <Button variant="destructive" onClick={onDelete} className="mr-auto">
               Verwijderen
